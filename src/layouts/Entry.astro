@@ -1,0 +1,241 @@
+---
+import Base from './Base.astro';
+import Plate from '../components/Plate.astro';
+import { formatDate, readingTime, type Entry } from '../lib/content';
+import { sections } from '../site.config';
+
+interface Props {
+  entry: Entry;
+  headings: { depth: number; slug: string; text: string }[];
+}
+const { entry, headings } = Astro.props;
+const d = entry.data as Entry['data'] & Record<string, any>;
+const section = sections[entry.collection];
+const toc = headings.filter((h) => h.depth === 2);
+const facts = [
+  d.platform && ['Platform', d.platform],
+  d.difficulty && ['Difficulty', d.difficulty],
+  d.stack?.length && ['Stack', d.stack.join(', ')],
+].filter(Boolean) as [string, string][];
+---
+<Base title={d.title} description={d.description}>
+  <article>
+    <header class="entry-head">
+      <p class="crumb"><a href={`/${entry.collection}/`}>{section.title}</a></p>
+      <h1>{d.title}</h1>
+      {d.description && <p class="lede">{d.description}</p>}
+      <p class="meta muted">
+        <time datetime={d.date.toISOString()}>{formatDate(d.date)}</time>
+        {d.updated && <>, updated <time datetime={d.updated.toISOString()}>{formatDate(d.updated)}</time></>}
+        <span>. {readingTime(entry.body)}</span>
+        {d.draft && <em class="draft">. Draft, not published</em>}
+      </p>
+    </header>
+
+    {d.cover && (
+      <figure class="cover">
+        <Plate cover={d.cover} alt={d.coverAlt} seed={d.title} ratio="21 / 9" sizes="(max-width: 78rem) 100vw, 72rem" widths={[600, 1200, 1800]} eager />
+        {d.coverAlt && <figcaption>{d.coverAlt}</figcaption>}
+      </figure>
+    )}
+
+    <div class="body">
+      <aside class="side">
+        {(facts.length > 0 || d.repo || d.link) && (
+          <dl class="facts">
+            {facts.map(([k, v]) => <div><dt>{k}</dt><dd>{v}</dd></div>)}
+            {d.repo && <div><dt>Source</dt><dd><a href={d.repo}>{d.repo.replace('https://github.com/', 'GitHub: ')}</a></dd></div>}
+            {d.link && <div><dt>Link</dt><dd><a href={d.link}>{d.link.replace('https://', '')}</a></dd></div>}
+          </dl>
+        )}
+        {toc.length >= 3 && (
+          <nav class="toc" aria-label="Contents">
+            <p>Contents</p>
+            <ol>{toc.map((h) => <li><a href={`#${h.slug}`}>{h.text}</a></li>)}</ol>
+          </nav>
+        )}
+        {d.tags.length > 0 && (
+          <p class="tags">Filed under {d.tags.join(', ')}.</p>
+        )}
+      </aside>
+
+      <div class="prose">
+        <slot />
+      </div>
+    </div>
+
+    <dialog class="lightbox" aria-label="Enlarged image">
+      <img alt="" />
+      <form method="dialog"><button>Close</button></form>
+    </dialog>
+  </article>
+</Base>
+
+<script>
+  // Click any image in the text to see it full size.
+  const dialog = document.querySelector<HTMLDialogElement>('.lightbox');
+  const big = dialog?.querySelector('img');
+  document.querySelectorAll<HTMLImageElement>('.prose img').forEach((img) => {
+    img.tabIndex = 0;
+    const open = () => {
+      if (!dialog || !big) return;
+      big.src = img.currentSrc || img.src;
+      big.alt = img.alt;
+      dialog.showModal();
+    };
+    img.addEventListener('click', open);
+    img.addEventListener('keydown', (e) => e.key === 'Enter' && open());
+  });
+  dialog?.addEventListener('click', (e) => e.target === dialog && dialog.close());
+</script>
+
+<style>
+  article {
+    padding-top: 3.5rem;
+  }
+  .entry-head {
+    max-width: 56rem;
+  }
+  .crumb {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 1rem;
+  }
+  .crumb a {
+    color: var(--red);
+    text-decoration: none;
+  }
+  h1 {
+    font-size: clamp(2.4rem, 6vw, 3.75rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--navy);
+    margin: 0.5rem 0 0;
+    text-wrap: balance;
+  }
+  .lede {
+    font-size: 1.5rem;
+    line-height: 1.45;
+    margin: 1rem 0 0;
+    text-wrap: pretty;
+  }
+  .meta {
+    font-size: 1.05rem;
+    margin: 1rem 0 0;
+  }
+  .draft {
+    color: var(--gold);
+  }
+  .cover {
+    margin: 2.5rem 0 0;
+  }
+  .cover figcaption {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--muted);
+  }
+  .body {
+    margin-top: 2.5rem;
+    padding-top: 2.5rem;
+    border-top: 3px double var(--rule);
+  }
+  .side {
+    font-size: 1.05rem;
+  }
+  .side > * + * {
+    margin-top: 1.5rem;
+  }
+  .facts {
+    margin: 0;
+  }
+  .facts div + div {
+    margin-top: 0.6rem;
+  }
+  .facts dt {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+  .facts dd {
+    margin: 0;
+    overflow-wrap: anywhere;
+  }
+  .toc {
+    padding: 1rem 1.25rem;
+    background: var(--paper-deep);
+    border-top: 3px solid var(--navy);
+  }
+  .toc p {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .toc ol {
+    margin: 0.5rem 0 0;
+    padding-left: 1.3rem;
+  }
+  .toc li + li {
+    margin-top: 0.25rem;
+  }
+  .tags {
+    margin-bottom: 0;
+    font-style: italic;
+    color: var(--muted);
+  }
+  .prose {
+    max-width: var(--measure);
+    margin-top: 2rem;
+  }
+  @media (min-width: 64rem) {
+    .body {
+      display: grid;
+      grid-template-columns: minmax(0, var(--measure)) 16rem;
+      justify-content: space-between;
+      gap: 4rem;
+    }
+    .side {
+      grid-column: 2;
+      grid-row: 1;
+      position: sticky;
+      top: 2rem;
+      align-self: start;
+    }
+    .prose {
+      grid-column: 1;
+      grid-row: 1;
+      margin-top: 0;
+    }
+  }
+  .lightbox {
+    max-width: min(96vw, 1400px);
+    max-height: 94vh;
+    padding: 0;
+    border: 1px solid var(--rule);
+    background: var(--paper);
+  }
+  .lightbox::backdrop {
+    background: rgb(8 14 30 / 0.85);
+  }
+  .lightbox img {
+    display: block;
+    max-width: 100%;
+    max-height: calc(94vh - 3rem);
+    margin: 0 auto;
+  }
+  .lightbox form {
+    text-align: right;
+    padding: 0.25rem 0.75rem;
+  }
+  .lightbox button {
+    font: inherit;
+    font-style: italic;
+    color: var(--muted);
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+</style>

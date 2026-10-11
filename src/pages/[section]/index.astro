@@ -1,0 +1,49 @@
+---
+import Base from '../../layouts/Base.astro';
+import EntryList from '../../components/EntryList.astro';
+import ProjectGrid from '../../components/ProjectGrid.astro';
+import { getEntries } from '../../lib/content';
+import { sections, type SectionKey } from '../../site.config';
+
+export function getStaticPaths() {
+  return Object.keys(sections).map((section) => ({ params: { section } }));
+}
+
+const section = Astro.params.section as SectionKey;
+const { title, intro, layout } = sections[section];
+const entries = await getEntries(section);
+---
+<Base title={title} description={intro}>
+  <header class="page-head">
+    <h1>{title}</h1>
+    <p>{intro}</p>
+  </header>
+  {entries.length === 0
+    ? <p class="muted empty">Nothing published here yet. Add a Markdown file to <code>src/content/{section}/</code>.</p>
+    : layout === 'grid'
+      ? <ProjectGrid entries={entries} />
+      : <EntryList entries={entries} thumbs={layout === 'thumbs'} />}
+</Base>
+
+<style>
+  .page-head {
+    padding: 3.5rem 0 1.5rem;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  h1 {
+    font-size: clamp(2.4rem, 6vw, 3.5rem);
+    font-weight: 600;
+    color: var(--navy);
+    margin: 0;
+  }
+  .page-head p {
+    margin: 0.4rem 0 0;
+    font-style: italic;
+    color: var(--muted);
+  }
+  .empty code {
+    font-family: var(--mono);
+    font-size: 0.85em;
+  }
+</style>

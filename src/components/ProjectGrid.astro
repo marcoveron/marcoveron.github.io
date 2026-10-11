@@ -1,0 +1,81 @@
+---
+import Plate from './Plate.astro';
+import { formatDate, type Entry } from '../lib/content';
+interface Props {
+  entries: Entry[];
+}
+const { entries } = Astro.props;
+---
+<ul class="grid">
+  {entries.map((e) => {
+    const d = e.data as Entry['data'] & { stack?: string[] };
+    return (
+      <li>
+        <a href={`/${e.collection}/${e.id}/`}>
+          <Plate cover={d.cover} alt={d.coverAlt} seed={d.title} widths={[400, 700]} sizes="(max-width: 44rem) 100vw, 20rem" />
+          <span class="head">
+            <span class="title">{d.title}</span>
+            <time datetime={d.date.toISOString()}>{formatDate(d.date, 'year')}</time>
+          </span>
+        </a>
+        {d.description && <p class="desc">{d.description}</p>}
+        {d.stack && d.stack.length > 0 && <p class="stack">{d.stack.join(', ')}</p>}
+      </li>
+    );
+  })}
+</ul>
+
+<style>
+  .grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: 2.75rem 2rem;
+  }
+  a {
+    display: block;
+    text-decoration: none;
+    color: var(--ink);
+  }
+  a :global(.plate) {
+    transition: border-color 0.15s;
+  }
+  a:hover :global(.plate) {
+    border-color: var(--red);
+  }
+  .head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-top: 0.9rem;
+  }
+  .title {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.3rem;
+    line-height: 1.25;
+  }
+  a:hover .title {
+    color: var(--navy);
+  }
+  time {
+    color: var(--muted);
+    font-size: 1rem;
+    font-variant-numeric: oldstyle-nums;
+  }
+  .desc {
+    margin: 0.3rem 0 0;
+    color: var(--muted);
+    font-size: 1.08rem;
+    line-height: 1.5;
+  }
+  .stack {
+    margin: 0.4rem 0 0;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--gold);
+  }
+</style>

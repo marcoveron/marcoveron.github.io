@@ -1,0 +1,105 @@
+---
+import Base from '../layouts/Base.astro';
+import EntryList from '../components/EntryList.astro';
+import ProjectGrid from '../components/ProjectGrid.astro';
+import Guilloche from '../components/Guilloche.astro';
+import { getEntries } from '../lib/content';
+import { site } from '../site.config';
+
+const projects = (await getEntries('projects')).filter((p) => p.data.featured);
+const writing = (await Promise.all([getEntries('writeups'), getEntries('blog'), getEntries('notes')]))
+  .flat()
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 5);
+---
+<Base>
+  <section class="hero">
+    <div class="text">
+      <h1>{site.name}</h1>
+      <p class="intro">{site.intro}</p>
+      <ul class="links">
+        {site.links.map((l) => <li><a href={l.href} rel="me">{l.label}</a></li>)}
+        <li><a href={`mailto:${site.email}`}>{site.email}</a></li>
+      </ul>
+    </div>
+    <div class="crest">
+      <Guilloche seed={site.name} variant="medallion" initials={site.initials} label="" />
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Selected work</h2>
+      <a href="/projects/">All projects</a>
+    </div>
+    <ProjectGrid entries={projects} />
+  </section>
+
+  <section>
+    <div class="section-head">
+      <h2>Recent writing</h2>
+      <a href="/writeups/">All write-ups</a>
+    </div>
+    {writing.length > 0
+      ? <EntryList entries={writing} showSection thumbs />
+      : <p class="muted">The first write-ups are on their way.</p>}
+  </section>
+</Base>
+
+<style>
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 3rem;
+    padding: 4.5rem 0 1rem;
+  }
+  h1 {
+    font-size: clamp(3rem, 8vw, 5.5rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.025em;
+    margin: 0;
+    color: var(--navy);
+  }
+  .intro {
+    font-size: clamp(1.3rem, 2.4vw, 1.6rem);
+    line-height: 1.45;
+    margin: 1.5rem 0 0;
+    max-width: 36rem;
+    text-wrap: pretty;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.75rem;
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 1rem 0 0;
+    border-top: 1px solid var(--rule);
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 1rem;
+  }
+  .crest {
+    width: min(100%, 24rem);
+    justify-self: end;
+  }
+  .section-head a {
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 1rem;
+  }
+  @media (max-width: 48rem) {
+    .hero {
+      grid-template-columns: 1fr;
+      padding-top: 2.5rem;
+      gap: 2rem;
+    }
+    .crest {
+      order: -1;
+      width: 9rem;
+      justify-self: start;
+    }
+  }
+</style>

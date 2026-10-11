@@ -1,0 +1,22 @@
+---
+import { render } from 'astro:content';
+import Entry from '../../layouts/Entry.astro';
+import { getEntries } from '../../lib/content';
+import { sections, type SectionKey } from '../../site.config';
+
+export async function getStaticPaths() {
+  const all = await Promise.all(
+    (Object.keys(sections) as SectionKey[]).map((section) => getEntries(section)),
+  );
+  return all.flat().map((entry) => ({
+    params: { section: entry.collection, id: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+---
+<Entry entry={entry} headings={headings}>
+  <Content />
+</Entry>

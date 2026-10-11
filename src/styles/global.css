@@ -1,0 +1,321 @@
+:root {
+  /* Paraguay's flag (red, white, blue) with UPTP's navy and gold, aged a little. */
+  --paper: #f5f3ec;
+  --paper-deep: #ebe7da;
+  --ink: #161c2c;
+  --muted: #545a68;
+  --navy: #13336b;
+  --red: #a8241b;
+  --gold: #8f6a0e;
+  --gold-bright: #d9a21b;
+  --rule: #cfc9b8;
+  --code-bg: #ebe8de;
+  --band: #102a58;
+  --band-ink: #ece8dc;
+
+  --display: 'Raleway', 'Helvetica Neue', Arial, sans-serif;
+  --serif: 'EB Garamond', Garamond, Georgia, serif;
+  --mono: 'IBM Plex Mono', ui-monospace, monospace;
+
+  --measure: 44rem;
+  --page: 72rem;
+  --gutter: clamp(1rem, 5vw, 3rem);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --paper: #0f1626;
+    --paper-deep: #162036;
+    --ink: #ebe7db;
+    --muted: #a6acba;
+    --navy: #a9bfeb;
+    --red: #e88a80;
+    --gold: #e0b44e;
+    --gold-bright: #e0b44e;
+    --rule: #2c3852;
+    --code-bg: #172138;
+    --band: #0a1020;
+    --band-ink: #ebe7db;
+    color-scheme: dark;
+  }
+}
+:root[data-theme='dark'] {
+  --paper: #0f1626;
+  --paper-deep: #162036;
+  --ink: #ebe7db;
+  --muted: #a6acba;
+  --navy: #a9bfeb;
+  --red: #e88a80;
+  --gold: #e0b44e;
+  --gold-bright: #e0b44e;
+  --rule: #2c3852;
+  --code-bg: #172138;
+  --band: #0a1020;
+  --band-ink: #ebe7db;
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-weight: 450;
+  line-height: 1.6;
+  font-feature-settings: 'kern', 'liga', 'onum';
+  text-rendering: optimizeLegibility;
+}
+
+a {
+  color: var(--navy);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  text-decoration-color: color-mix(in srgb, var(--navy) 40%, transparent);
+}
+a:hover {
+  text-decoration-color: var(--gold);
+}
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--display);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+}
+
+.wrap {
+  max-width: calc(var(--page) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* Section headings: title on the left, a short gold rule under it. */
+.section-head {
+  margin: 5rem 0 2rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem 2rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--rule);
+  position: relative;
+}
+.section-head::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 4rem;
+  height: 3px;
+  background: var(--red);
+}
+.section-head h2 {
+  font-size: 1.9rem;
+  margin: 0;
+}
+.section-head p {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-style: italic;
+}
+
+.ornament {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  color: var(--gold);
+  margin: 3.5rem 0;
+}
+.ornament::before,
+.ornament::after {
+  content: '';
+  flex: 1;
+  border-top: 1px solid var(--rule);
+}
+
+/* Long-form Markdown */
+.prose {
+  hyphens: auto;
+}
+.prose > * + * {
+  margin-top: 1.1em;
+}
+.prose p,
+.prose ul,
+.prose ol {
+  margin-bottom: 0;
+}
+.prose h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--navy);
+  margin: 2.4em 0 0;
+}
+.prose h3 {
+  font-size: 1.35rem;
+  margin: 1.8em 0 0;
+}
+.prose h2 + *,
+.prose h3 + * {
+  margin-top: 0.6em;
+}
+.prose li + li {
+  margin-top: 0.3em;
+}
+.prose blockquote {
+  margin-left: 0;
+  padding-left: 1.25rem;
+  border-left: 3px solid var(--red);
+  font-style: italic;
+  color: var(--muted);
+}
+/* Obsidian callouts: > [!note], > [!tip], > [!warning]… */
+.prose .callout {
+  padding: 0.9rem 1.25rem;
+  background: var(--paper-deep);
+  border-left: 3px solid var(--navy);
+  font-size: 1.1rem;
+}
+.prose .callout > * + * {
+  margin-top: 0.6em;
+}
+.prose .callout > :last-child {
+  margin-bottom: 0;
+}
+.prose .callout-title {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--navy);
+}
+.prose :is(.callout-warning, .callout-caution, .callout-danger, .callout-bug, .callout-failure) {
+  border-left-color: var(--red);
+}
+.prose :is(.callout-warning, .callout-caution, .callout-danger, .callout-bug, .callout-failure) .callout-title {
+  color: var(--red);
+}
+.prose :is(.callout-tip, .callout-success, .callout-important, .callout-example) {
+  border-left-color: var(--gold);
+}
+.prose mark {
+  background: color-mix(in srgb, var(--gold-bright) 30%, transparent);
+  color: inherit;
+  padding: 0 0.1em;
+}
+
+/* Images in Markdown: framed like book plates. A line in *italics* right
+   below an image (no blank line in between) becomes its caption. */
+.prose p:has(> img) {
+  margin-top: 2em;
+  margin-bottom: 2em;
+  text-align: center;
+}
+.prose img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+  padding: 5px;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  cursor: zoom-in;
+}
+.prose p:has(> img) > em {
+  display: block;
+  margin-top: 0.6rem;
+  font-size: 1rem;
+  color: var(--muted);
+}
+
+.prose hr {
+  border: 0;
+  text-align: center;
+  margin: 2.5em 0;
+}
+.prose hr::after {
+  content: '❦';
+  color: var(--gold);
+}
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1rem;
+  display: block;
+  overflow-x: auto;
+}
+.prose th,
+.prose td {
+  text-align: left;
+  padding: 0.4rem 0.75rem 0.4rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.prose th {
+  font-weight: 600;
+}
+.prose code {
+  font-family: var(--mono);
+  font-size: 0.8em;
+  background: var(--code-bg);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+}
+.prose pre {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--code-bg) !important;
+}
+.prose pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.8rem;
+}
+
+/* Shiki dual themes: light by default, dark tokens when dark mode is on. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .astro-code,
+  :root:not([data-theme='light']) .astro-code span {
+    color: var(--shiki-dark) !important;
+  }
+}
+:root[data-theme='dark'] .astro-code,
+:root[data-theme='dark'] .astro-code span {
+  color: var(--shiki-dark) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

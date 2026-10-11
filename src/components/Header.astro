@@ -1,0 +1,88 @@
+---
+import Monogram from './Monogram.astro';
+import { site } from '../site.config';
+import { getNav } from '../lib/nav';
+const nav = await getNav();
+const path = Astro.url.pathname;
+---
+<div class="tricolor" aria-hidden="true"><span></span><span></span><span></span></div>
+<header class="masthead">
+  <div class="wrap site-header">
+    <a href="/" class="home" aria-label={`${site.name}, home`}>
+      <Monogram size={44} />
+      <span>{site.name}</span>
+    </a>
+    <nav aria-label="Main">
+      <ul>
+        {nav.map((item) => (
+          <li>
+            <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>{item.label}</a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  /* Paraguay's flag as a thin band across the top. */
+  .tricolor {
+    display: flex;
+    flex-direction: column;
+  }
+  .tricolor span {
+    height: 4px;
+  }
+  .tricolor span:nth-child(1) { background: #c8291f; }
+  .tricolor span:nth-child(2) { background: #f5f3ec; }
+  .tricolor span:nth-child(3) { background: #13336b; }
+
+  .masthead {
+    border-bottom: 3px double var(--rule);
+  }
+  .site-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+  .home {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+    color: var(--ink);
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.15rem;
+    letter-spacing: 0.01em;
+  }
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.75rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  nav a {
+    color: var(--ink);
+    text-decoration: none;
+    font-family: var(--display);
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 0.35rem 0;
+    border-bottom: 2px solid transparent;
+  }
+  nav a:hover {
+    color: var(--navy);
+    border-bottom-color: var(--rule);
+  }
+  nav a[aria-current='page'] {
+    color: var(--navy);
+    border-bottom-color: var(--red);
+  }
+</style>

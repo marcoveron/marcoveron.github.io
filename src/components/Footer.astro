@@ -1,0 +1,112 @@
+---
+import { site } from '../site.config';
+import { getNav } from '../lib/nav';
+const nav = await getNav();
+const year = new Date().getFullYear();
+---
+<footer class="band">
+  <div class="wrap cols">
+    <div>
+      <p class="name">{site.name}</p>
+      <p class="loc">{site.location}</p>
+    </div>
+    <nav aria-label="Footer">
+      <ul>{nav.map((i) => <li><a href={i.href}>{i.label}</a></li>)}</ul>
+    </nav>
+    <ul>
+      {site.links.map((l) => <li><a href={l.href} rel="me">{l.label}</a></li>)}
+      <li><a href={`mailto:${site.email}`}>Email</a></li>
+      <li><a href="/rss.xml">RSS</a></li>
+    </ul>
+  </div>
+  <div class="wrap base">
+    <span>© {year} {site.name}</span>
+    <button type="button" class="theme" id="theme-toggle">Switch to dark</button>
+  </div>
+</footer>
+
+<script is:inline>
+  (() => {
+    const btn = document.getElementById('theme-toggle');
+    const root = document.documentElement;
+    const isDark = () =>
+      root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    const label = () => (btn.textContent = isDark() ? 'Switch to light' : 'Switch to dark');
+    label();
+    btn.addEventListener('click', () => {
+      root.dataset.theme = isDark() ? 'light' : 'dark';
+      try { localStorage.setItem('theme', root.dataset.theme); } catch {}
+      label();
+    });
+  })();
+</script>
+
+<style>
+  .band {
+    margin-top: 6rem;
+    background: var(--band);
+    color: var(--band-ink);
+    border-top: 4px solid var(--gold-bright);
+  }
+  .cols {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: 2rem;
+    padding-top: 3rem;
+    padding-bottom: 2.5rem;
+  }
+  .name {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: 1.4rem;
+  }
+  .loc {
+    margin: 0.2rem 0 0;
+    font-style: italic;
+    opacity: 0.75;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li + li {
+    margin-top: 0.3rem;
+  }
+  a {
+    color: var(--band-ink);
+    text-decoration-color: color-mix(in srgb, var(--band-ink) 35%, transparent);
+  }
+  a:hover {
+    color: var(--gold-bright);
+    text-decoration-color: var(--gold-bright);
+  }
+  .base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1.5rem;
+    border-top: 1px solid color-mix(in srgb, var(--band-ink) 18%, transparent);
+    font-size: 1rem;
+    opacity: 0.8;
+  }
+  .theme {
+    font: inherit;
+    font-style: italic;
+    color: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+  .theme:hover {
+    color: var(--gold-bright);
+  }
+  @media (max-width: 40rem) {
+    .cols { grid-template-columns: 1fr 1fr; }
+    .cols > div:first-child { grid-column: 1 / -1; }
+  }
+</style>

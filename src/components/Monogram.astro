@@ -1,0 +1,15 @@
+---
+import { site } from '../site.config';
+const { size = 56 } = Astro.props;
+---
+<svg class="monogram" width={size} height={size} viewBox="0 0 100 100" role="img" aria-label={site.name}>
+  <circle cx="50" cy="50" r="47" fill="none" stroke="currentColor" stroke-width="2.5" />
+  <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" stroke-width="1" />
+  <text x="50" y="50" text-anchor="middle" dominant-baseline="central"
+        font-family="Raleway, sans-serif" font-weight="600" font-size="32" fill="currentColor"
+        letter-spacing="1">{site.initials}</text>
+</svg>
+
+<style>
+  .monogram { color: var(--navy); display: block; }
+</style>
