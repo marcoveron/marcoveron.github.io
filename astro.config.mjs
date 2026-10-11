@@ -3,7 +3,7 @@ import sitemap from '@astrojs/sitemap';
 import remarkCallouts from './src/lib/remark-callouts.mjs';
 
 export default defineConfig({
-  site: 'https://marcoveron.me',
+  site: 'https://marcoveron.github.io',
   integrations: [sitemap()],
   markdown: {
     remarkPlugins: [remarkCallouts],

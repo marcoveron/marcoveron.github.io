@@ -1,4 +1,4 @@
-# marcoveron.me
+# marcoveron.github.io
 
 Personal site built with [Astro](https://astro.build). Content is plain Markdown.
 
@@ -94,9 +94,7 @@ Colors (Paraguay's flag plus UPTP's navy and gold) are tokens at the top of `src
 
 ## Deploying
 
-Every push to `main` builds the site and publishes it to GitHub Pages (`.github/workflows/deploy.yml`) at https://marcoveron.me. `public/CNAME` holds the domain.
-
-Domain: `marcoveron.me` at Namecheap. The apex A records point to GitHub Pages (185.199.108–111.153) and `www` is a CNAME to the apex.
+Every push to `main` builds the site and publishes it to GitHub Pages (`.github/workflows/deploy.yml`) at https://marcoveron.github.io.
 
 Publishing a write-up from Obsidian end to end:
 
